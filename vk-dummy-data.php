@@ -76,13 +76,13 @@ add_action('init', 'register_custom_post_types_and_taxonomies');
 // 管理メニューにカスタムページを追加
 function custom_dummy_data_menu() {
     add_menu_page(
-        'VK Dummy Data',
-        'Dummy Data',
-        'manage_options',
-        'custom-dummy-data',
-        'custom_dummy_data_page',
-        'dashicons-admin-tools',
-        20
+        'VK Dummy Data',    // ページタイトル
+        'VK Dummy Data',    // メニュータイトル
+        'manage_options',   // 権限
+        'custom-dummy-data',// メニューのスラッグ
+        'custom_dummy_data_page', // コールバック関数
+        'dashicons-admin-tools',  // アイコン
+        20                   // メニュー位置
     );
 }
 add_action('admin_menu', 'custom_dummy_data_menu');
