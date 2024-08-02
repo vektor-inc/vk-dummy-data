@@ -2,8 +2,8 @@
 /*
 Plugin Name: VK Dummy Data
 Description: カスタム投稿タイプとタクソノミーを登録し、ダミーデータの作成と削除を行います。
-Version: 1.0
-Author: Your Name
+Version: 1.0.0
+Author: Vektor Inc.
 */
 
 // カスタム投稿タイプとタクソノミーを登録
