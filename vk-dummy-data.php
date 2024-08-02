@@ -36,8 +36,8 @@ function register_custom_post_types_and_taxonomies() {
             'name' => "Taxonomy 1",
             'singular_name' => "Taxonomy 1",
         ],
-        'hierarchical'      => true,
         'public' => true,
+        'hierarchical' => true, // カテゴリタイプ
         'rewrite' => ['slug' => "taxonomy-1-1"],
     ]);
 
@@ -47,6 +47,7 @@ function register_custom_post_types_and_taxonomies() {
             'singular_name' => "Taxonomy 2",
         ],
         'public' => true,
+        'hierarchical' => false, // タグタイプ
         'rewrite' => ['slug' => "taxonomy-1-2"],
     ]);
 
@@ -55,8 +56,8 @@ function register_custom_post_types_and_taxonomies() {
             'name' => "Taxonomy 1",
             'singular_name' => "Taxonomy 1",
         ],
-        'hierarchical'      => true,
         'public' => true,
+        'hierarchical' => true, // カテゴリタイプ
         'rewrite' => ['slug' => "taxonomy-2-1"],
     ]);
 
@@ -66,6 +67,7 @@ function register_custom_post_types_and_taxonomies() {
             'singular_name' => "Taxonomy 2",
         ],
         'public' => true,
+        'hierarchical' => false, // タグタイプ
         'rewrite' => ['slug' => "taxonomy-2-2"],
     ]);
 }
@@ -182,34 +184,63 @@ function create_custom_taxonomies() {
     global $wpdb;
 
     $taxonomy_ids = [
-        'custom_post_type_1' => [],
-        'custom_post_type_2' => []
+        'custom_post_type_1' => [
+            'taxonomy_1_1' => [],
+            'taxonomy_1_2' => [],
+        ],
+        'custom_post_type_2' => [
+            'taxonomy_2_1' => [],
+            'taxonomy_2_2' => [],
+        ]
     ];
 
     for ($i = 1; $i <= 10; $i++) {
-        $taxonomy = wp_insert_term("Term 1 $i", "taxonomy_1_1");
-        if (!is_wp_error($taxonomy)) {
-            $taxonomy_ids['custom_post_type_1'][] = $taxonomy['term_id'];
+        // Custom Post Type 1
+        $term = term_exists("Custom Post Type 1 Term 1 $i", "taxonomy_1_1");
+        if ($term === 0 || $term === null) {
+            $taxonomy = wp_insert_term("Custom Post Type 1 Term 1 $i", "taxonomy_1_1");
+            if (!is_wp_error($taxonomy)) {
+                $taxonomy_ids['custom_post_type_1']['taxonomy_1_1'][] = $taxonomy['term_id'];
+            }
+        } else {
+            $taxonomy_ids['custom_post_type_1']['taxonomy_1_1'][] = $term['term_id'];
         }
 
-        $taxonomy = wp_insert_term("Term 2 $i", "taxonomy_1_2");
-        if (!is_wp_error($taxonomy)) {
-            $taxonomy_ids['custom_post_type_1'][] = $taxonomy['term_id'];
+        $term = term_exists("Custom Post Type 1 Term 2 $i", "taxonomy_1_2");
+        if ($term === 0 || $term === null) {
+            $taxonomy = wp_insert_term("Custom Post Type 1 Term 2 $i", "taxonomy_1_2");
+            if (!is_wp_error($taxonomy)) {
+                $taxonomy_ids['custom_post_type_1']['taxonomy_1_2'][] = $taxonomy['term_id'];
+            }
+        } else {
+            $taxonomy_ids['custom_post_type_1']['taxonomy_1_2'][] = $term['term_id'];
         }
 
-        $taxonomy = wp_insert_term("Term 1 $i", "taxonomy_2_1");
-        if (!is_wp_error($taxonomy)) {
-            $taxonomy_ids['custom_post_type_2'][] = $taxonomy['term_id'];
+        // Custom Post Type 2
+        $term = term_exists("Custom Post Type 2 Term 1 $i", "taxonomy_2_1");
+        if ($term === 0 || $term === null) {
+            $taxonomy = wp_insert_term("Custom Post Type 2 Term 1 $i", "taxonomy_2_1");
+            if (!is_wp_error($taxonomy)) {
+                $taxonomy_ids['custom_post_type_2']['taxonomy_2_1'][] = $taxonomy['term_id'];
+            }
+        } else {
+            $taxonomy_ids['custom_post_type_2']['taxonomy_2_1'][] = $term['term_id'];
         }
 
-        $taxonomy = wp_insert_term("Term 2 $i", "taxonomy_2_2");
-        if (!is_wp_error($taxonomy)) {
-            $taxonomy_ids['custom_post_type_2'][] = $taxonomy['term_id'];
+        $term = term_exists("Custom Post Type 2 Term 2 $i", "taxonomy_2_2");
+        if ($term === 0 || $term === null) {
+            $taxonomy = wp_insert_term("Custom Post Type 2 Term 2 $i", "taxonomy_2_2");
+            if (!is_wp_error($taxonomy)) {
+                $taxonomy_ids['custom_post_type_2']['taxonomy_2_2'][] = $taxonomy['term_id'];
+            }
+        } else {
+            $taxonomy_ids['custom_post_type_2']['taxonomy_2_2'][] = $term['term_id'];
         }
     }
 
     return $taxonomy_ids;
 }
+
 
 // ランダムな日本語の単語リスト
 $words = [
@@ -233,7 +264,7 @@ function insert_dummy_posts($count, $batch_size, $word_list, $taxonomy_ids, $pos
 
     $current_time = time();
     $ten_years_ago = strtotime('-10 years');
-    $interval = ($current_time - $ten_years_ago) / $count; // 各投稿の間隔
+    $interval = intval(($current_time - $ten_years_ago) / $count); // 各投稿の間隔を整数に変換
 
     $values = [];
     $meta_values = [];
@@ -273,10 +304,18 @@ function insert_dummy_posts($count, $batch_size, $word_list, $taxonomy_ids, $pos
             $meta_values[] = $wpdb->prepare("(%d, %s, %s)", $id, '_edit_last', 1);
             $meta_values[] = $wpdb->prepare("(%d, %s, %s)", $id, '_edit_lock', time() . ':1');
 
-            // ランダムなタクソノミーを割り当てる
-            if (!empty($taxonomy_ids[$post_type])) {
-                $random_taxonomy = $taxonomy_ids[$post_type][array_rand($taxonomy_ids[$post_type])];
-                $term_relationships[] = $wpdb->prepare("(%d, %d)", $id, $random_taxonomy);
+            // 各タクソノミーにランダムなタームを割り当てる
+            foreach ($taxonomy_ids[$post_type] as $taxonomy => $terms) {
+                if (!empty($terms)) {
+                    $random_term_id = $terms[array_rand($terms)];
+                    $term_taxonomy_id = $wpdb->get_var($wpdb->prepare(
+                        "SELECT term_taxonomy_id FROM {$wpdb->prefix}term_taxonomy WHERE term_id = %d AND taxonomy = %s",
+                        $random_term_id, $taxonomy
+                    ));
+                    if ($term_taxonomy_id) {
+                        $term_relationships[] = $wpdb->prepare("(%d, %d)", $id, $term_taxonomy_id);
+                    }
+                }
             }
         }
 
