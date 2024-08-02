@@ -7,6 +7,7 @@ Author: Your Name
 */
 
 // カスタム投稿タイプとタクソノミーを登録
+// カスタム投稿タイプとタクソノミーを登録
 function register_custom_post_types_and_taxonomies() {
     // カスタム投稿タイプ1を登録
     register_post_type('custom_post_type_1', [
@@ -16,6 +17,7 @@ function register_custom_post_types_and_taxonomies() {
         ],
         'public' => true,
         'has_archive' => true,
+        'show_in_rest' => true,  // これを追加
         'rewrite' => ['slug' => 'custom-post-type-1'],
     ]);
 
@@ -27,47 +29,52 @@ function register_custom_post_types_and_taxonomies() {
         ],
         'public' => true,
         'has_archive' => true,
+        'show_in_rest' => true,  // これを追加
         'rewrite' => ['slug' => 'custom-post-type-2'],
     ]);
 
     // カスタムタクソノミーを登録
     register_taxonomy("taxonomy_1_1", 'custom_post_type_1', [
         'labels' => [
-            'name' => "Taxonomy 1",
-            'singular_name' => "Taxonomy 1",
+            'name' => "Custom Post Type 1 Taxonomy 1",
+            'singular_name' => "Custom Post Type 1 Taxonomy 1",
         ],
         'public' => true,
         'hierarchical' => true, // カテゴリタイプ
+        'show_in_rest' => true, // これを追加
         'rewrite' => ['slug' => "taxonomy-1-1"],
     ]);
 
     register_taxonomy("taxonomy_1_2", 'custom_post_type_1', [
         'labels' => [
-            'name' => "Taxonomy 2",
-            'singular_name' => "Taxonomy 2",
+            'name' => "Custom Post Type 1 Taxonomy 2",
+            'singular_name' => "Custom Post Type 1 Taxonomy 2",
         ],
         'public' => true,
         'hierarchical' => false, // タグタイプ
+        'show_in_rest' => true,  // これを追加
         'rewrite' => ['slug' => "taxonomy-1-2"],
     ]);
 
     register_taxonomy("taxonomy_2_1", 'custom_post_type_2', [
         'labels' => [
-            'name' => "Taxonomy 1",
-            'singular_name' => "Taxonomy 1",
+            'name' => "Custom Post Type 2 Taxonomy 1",
+            'singular_name' => "Custom Post Type 2 Taxonomy 1",
         ],
         'public' => true,
         'hierarchical' => true, // カテゴリタイプ
+        'show_in_rest' => true, // これを追加
         'rewrite' => ['slug' => "taxonomy-2-1"],
     ]);
 
     register_taxonomy("taxonomy_2_2", 'custom_post_type_2', [
         'labels' => [
-            'name' => "Taxonomy 2",
-            'singular_name' => "Taxonomy 2",
+            'name' => "Custom Post Type 2 Taxonomy 2",
+            'singular_name' => "Custom Post Type 2 Taxonomy 2",
         ],
         'public' => true,
         'hierarchical' => false, // タグタイプ
+        'show_in_rest' => true,  // これを追加
         'rewrite' => ['slug' => "taxonomy-2-2"],
     ]);
 }
@@ -240,7 +247,6 @@ function create_custom_taxonomies() {
 
     return $taxonomy_ids;
 }
-
 
 // ランダムな日本語の単語リスト
 $words = [
