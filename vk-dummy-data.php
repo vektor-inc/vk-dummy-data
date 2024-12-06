@@ -380,4 +380,21 @@ function delete_dummy_data() {
 
     echo 'Deleted dummy data.<br>';
 }
+
+
+function update_term_counts() {
+    $taxonomies = get_taxonomies([], 'names');
+    foreach ($taxonomies as $taxonomy) {
+        $terms = get_terms([
+            'taxonomy' => $taxonomy,
+            'hide_empty' => false,
+        ]);
+
+        foreach ($terms as $term) {
+            wp_update_term_count_now([$term->term_id], $taxonomy);
+        }
+    }
+}
+add_action('init', 'update_term_counts');
+
 ?>
