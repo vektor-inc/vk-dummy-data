@@ -17,7 +17,7 @@ function register_custom_post_types_and_taxonomies() {
         ],
         'public' => true,
         'has_archive' => true,
-        'show_in_rest' => true,  // これを追加
+        'show_in_rest' => true,
         'rewrite' => ['slug' => 'custom-post-type-1'],
     ]);
 
@@ -29,7 +29,7 @@ function register_custom_post_types_and_taxonomies() {
         ],
         'public' => true,
         'has_archive' => true,
-        'show_in_rest' => true,  // これを追加
+        'show_in_rest' => true,
         'rewrite' => ['slug' => 'custom-post-type-2'],
     ]);
 
@@ -40,8 +40,8 @@ function register_custom_post_types_and_taxonomies() {
             'singular_name' => "Custom Post Type 1 Taxonomy 1",
         ],
         'public' => true,
-        'hierarchical' => true, // カテゴリタイプ
-        'show_in_rest' => true, // これを追加
+        'hierarchical' => true,
+        'show_in_rest' => true,
         'rewrite' => ['slug' => "taxonomy-1-1"],
     ]);
 
@@ -51,8 +51,8 @@ function register_custom_post_types_and_taxonomies() {
             'singular_name' => "Custom Post Type 1 Taxonomy 2",
         ],
         'public' => true,
-        'hierarchical' => false, // タグタイプ
-        'show_in_rest' => true,  // これを追加
+        'hierarchical' => false,
+        'show_in_rest' => true,
         'rewrite' => ['slug' => "taxonomy-1-2"],
     ]);
 
@@ -62,8 +62,8 @@ function register_custom_post_types_and_taxonomies() {
             'singular_name' => "Custom Post Type 2 Taxonomy 1",
         ],
         'public' => true,
-        'hierarchical' => true, // カテゴリタイプ
-        'show_in_rest' => true, // これを追加
+        'hierarchical' => true,
+        'show_in_rest' => true,
         'rewrite' => ['slug' => "taxonomy-2-1"],
     ]);
 
@@ -73,8 +73,8 @@ function register_custom_post_types_and_taxonomies() {
             'singular_name' => "Custom Post Type 2 Taxonomy 2",
         ],
         'public' => true,
-        'hierarchical' => false, // タグタイプ
-        'show_in_rest' => true,  // これを追加
+        'hierarchical' => false,
+        'show_in_rest' => true, 
         'rewrite' => ['slug' => "taxonomy-2-2"],
     ]);
 }
@@ -83,13 +83,13 @@ add_action('init', 'register_custom_post_types_and_taxonomies');
 // 管理メニューにカスタムページを追加
 function custom_dummy_data_menu() {
     add_menu_page(
-        'VK Dummy Data',    // ページタイトル
-        'VK Dummy Data',    // メニュータイトル
-        'manage_options',   // 権限
-        'custom-dummy-data',// メニューのスラッグ
-        'custom_dummy_data_page', // コールバック関数
-        'dashicons-admin-tools',  // アイコン
-        20                   // メニュー位置
+        'VK Dummy Data',
+        'VK Dummy Data',
+        'manage_options',
+        'custom-dummy-data',
+        'custom_dummy_data_page',
+        'dashicons-admin-tools',
+        20
     );
 }
 add_action('admin_menu', 'custom_dummy_data_menu');
